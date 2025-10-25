@@ -1,0 +1,14 @@
+Flask==2.3.3
+flask-cors==4.0.0
+SpeechRecognition==3.10.0
+pydub==0.25.1
+openai==0.28.1
+Werkzeug==2.3.7
+pyaudio==0.2.11
+
+# Optional dependencies for better audio processing
+ffmpeg-python==0.2.0
+
+# For production deployment (optional)
+gunicorn==21.2.0
+waitress==2.1.2

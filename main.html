@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedTranscribe AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba3 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4F46E5;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #4F46E5;
+        }
+
+        .try-it-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .try-it-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .content-section {
+            color: white;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .language-support {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .language-support h3 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .language-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .language-tag {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            background: purple;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .transcription-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .language-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .language-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .transcription-area {
+            background: #f9fafb;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 1.5rem;
+            min-height: 200px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .transcription-area.active {
+            background: white;
+            border-color: #667eea;
+            color: #1f2937;
+        }
+
+        .transcription-area.rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recording-controls {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .record-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .record-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .record-btn.recording {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .control-btn {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .status-indicator {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: #f3f4f6;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #6b7280;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-indicator.recording {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.1));
+            color: #0891b2;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .microphone-icon {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 968px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 1rem;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .recording-controls,
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🩺</div>
+                MedTranscribe
+            </div>
+            <nav class="nav-links">
+              
+                <a href="https://www.instagram.com/saksham.begad" class="try-it-btn">Contact Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="content-section">
+            <h1 class="main-title">
+                Multi-language<br>
+                Voice-to-Text &<br>
+                <span style="color: #06b6d4;">Symptom<br>Summarizer</span>
+            </h1>
+            <p class="subtitle">
+                Built for doctors. Capture patient history by voice in any supported language and instantly get a clean clinical summary (SOAP).
+            </p>
+
+            <div class="language-support">
+                <h3>🌍 Supported Languages</h3>
+                <div class="language-tags">
+                    <span class="language-tag">English</span>
+                    <span class="language-tag">हिंदी Hindi</span>
+                    <span class="language-tag">தமிழ் Tamil</span>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <button class="btn-primary" id="startRecordingBtn">
+                    🎤 Start Recording
+                </button>
+                <button class="btn-secondary">
+                    👁️ See Live Demo
+                </button>
+            </div>
+        </section>
+
+        <section class="transcription-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    📝 Live Transcription
+                    <div class="live-indicator" id="liveIndicator" style="display: none;">
+                        <div class="live-dot"></div>
+                        LIVE
+                    </div>
+                </div>
+                <select class="language-select" id="languageSelect">
+                    <option value="en-US">🇺🇸 English (US)</option>
+                    <option value="hi-IN">🇮🇳 हिंदी Hindi</option>
+                    <option value="ta-IN">🇮🇳 தமிழ் Tamil</option>
+
+                </select>
+            </div>
+
+            <div class="transcription-area" id="transcriptionArea">
+                Choose language, speak, or type/paste notes below.
+            </div>
+
+            <div class="controls">
+                <div class="recording-controls">
+                    <button class="record-btn" id="recordBtn">
+                        <span class="microphone-icon">🎤</span>
+                    </button>
+                    <button class="control-btn" id="pauseBtn" disabled>
+                        ⏸️ Pause
+                    </button>
+                    <button class="control-btn" id="stopBtn" disabled>
+                        ⏹️ Stop
+                    </button>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="control-btn" id="copyBtn">
+                        📋 Copy
+                    </button>
+                    <button class="control-btn" id="downloadBtn">
+                        💾 Download
+                    </button>
+                    <button class="control-btn" id="summarizeBtn">
+                        📋 Summarize
+                    </button>
+                </div>
+            </div>
+
+            <div class="status-indicator" id="statusIndicator">
+                Ready to transcribe. Click the microphone to start recording.
+            </div>
+        </section>
+    </main>
+
+    <script>
+        class MedTranscribeApp {
+            constructor() {
+                this.isRecording = false;
+                this.isPaused = false;
+                this.mediaRecorder = null;
+                this.currentTranscription = '';
+                this.recognition = null;
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.initializeSpeechRecognition();
+            }
+
+            initializeElements() {
+                this.recordBtn = document.getElementById('recordBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.stopBtn = document.getElementById('stopBtn');
+                this.copyBtn = document.getElementById('copyBtn');
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.summarizeBtn = document.getElementById('summarizeBtn');
+                this.startRecordingBtn = document.getElementById('startRecordingBtn');
+                this.transcriptionArea = document.getElementById('transcriptionArea');
+                this.languageSelect = document.getElementById('languageSelect');
+                this.statusIndicator = document.getElementById('statusIndicator');
+                this.liveIndicator = document.getElementById('liveIndicator');
+            }
+
+            setupEventListeners() {
+                this.recordBtn.addEventListener('click', () => this.toggleRecording());
+                this.startRecordingBtn.addEventListener('click', () => this.toggleRecording());
+                this.pauseBtn.addEventListener('click', () => this.pauseRecording());
+                this.stopBtn.addEventListener('click', () => this.stopRecording());
+                this.copyBtn.addEventListener('click', () => this.copyToClipboard());
+                this.downloadBtn.addEventListener('click', () => this.downloadTranscription());
+                this.summarizeBtn.addEventListener('click', () => this.generateSummary());
+                this.languageSelect.addEventListener('change', () => this.updateLanguage());
+            }
+
+            initializeSpeechRecognition() {
+                if ('webkitSpeechRecognition' in window) {
+                    this.recognition = new webkitSpeechRecognition();
+                    this.recognition.continuous = true;
+                    this.recognition.interimResults = true;
+                    this.recognition.lang = this.languageSelect.value;
+
+                    this.recognition.onresult = (event) => {
+                        let transcript = '';
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            transcript += event.results[i][0].transcript;
+                        }
+                        this.currentTranscription = transcript;
+                        this.transcriptionArea.textContent = transcript || 'Listening...';
+                        this.transcriptionArea.classList.add('active');
+                        
+                        // Update text direction based on language
+                        this.updateTextDirection();
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        this.stopRecording();
+                        this.showStatus('Error occurred during transcription', 'error');
+                    };
+
+                    this.recognition.onend = () => {
+                        if (this.isRecording && !this.isPaused) {
+                            this.recognition.start();
+                        }
+                    };
+                } else {
+                    this.showStatus('Speech recognition not supported in this browser', 'error');
+                }
+            }
+
+            updateTextDirection() {
+                const language = this.languageSelect.value;
+                const transcriptionArea = this.transcriptionArea;
+                
+                // Remove existing direction classes
+                transcriptionArea.classList.remove('rtl');
+                
+                // Set appropriate text direction and alignment
+                if (['hi-IN', 'ta-IN'].includes(language)) {
+                    // Left-to-right for Hindi and Tamil
+                    transcriptionArea.style.direction = 'ltr';
+                    transcriptionArea.style.textAlign = 'left';
+                } else if (['ar-SA', 'he-IL'].includes(language)) {
+                    // Right-to-left for Arabic and Hebrew (if added later)
+                    transcriptionArea.classList.add('rtl');
+                } else {
+                    // Default left-to-right
+                    transcriptionArea.style.direction = 'ltr';
+                    transcriptionArea.style.textAlign = 'left';
+                }
+            }
+
+            toggleRecording() {
+                if (!this.isRecording) {
+                    this.startRecording();
+                } else {
+                    this.stopRecording();
+                }
+            }
+
+            startRecording() {
+                if (!this.recognition) return;
+
+                try {
+                    this.recognition.start();
+                    this.isRecording = true;
+                    this.updateUI();
+                    this.updateTextDirection();
+                    
+                    const language = this.getLanguageName();
+                    this.showStatus(`Recording in ${language}... Speak now`, 'recording');
+                } catch (error) {
+                    console.error('Error starting recording:', error);
+                    this.showStatus('Error starting recording', 'error');
+                }
+            }
+
+            pauseRecording() {
+                if (this.recognition && this.isRecording) {
+                    if (!this.isPaused) {
+                        this.recognition.stop();
+                        this.isPaused = true;
+                        this.pauseBtn.textContent = '▶️ Resume';
+                        this.showStatus('Recording paused', 'paused');
+                    } else {
+                        this.recognition.start();
+                        this.isPaused = false;
+                        this.pauseBtn.textContent = '⏸️ Pause';
+                        this.showStatus('Recording resumed', 'recording');
+                    }
+                }
+            }
+
+            stopRecording() {
+                if (this.recognition && this.isRecording) {
+                    this.recognition.stop();
+                    this.isRecording = false;
+                    this.isPaused = false;
+                    this.updateUI();
+                    this.showStatus('Recording stopped. Transcription complete.', 'stopped');
+                }
+            }
+
+            updateUI() {
+                if (this.isRecording) {
+                    this.recordBtn.classList.add('recording');
+                    this.recordBtn.innerHTML = '<span class="microphone-icon">⏹️</span>';
+                    this.pauseBtn.disabled = false;
+                    this.stopBtn.disabled = false;
+                    this.liveIndicator.style.display = 'flex';
+                } else {
+                    this.recordBtn.classList.remove('recording');
+                    this.recordBtn.innerHTML = '<span class="microphone-icon">🎤</span>';
+                    this.pauseBtn.disabled = true;
+                    this.stopBtn.disabled = true;
+                    this.pauseBtn.textContent = '⏸️ Pause';
+                    this.liveIndicator.style.display = 'none';
+                }
+            }
+
+            updateLanguage() {
+                if (this.recognition) {
+                    this.recognition.lang = this.languageSelect.value;
+                }
+                this.updateTextDirection();
+                this.updateTransliterationMode(); // Update checkbox visibility
+                
+                const languageName = this.getLanguageName();
+                this.showStatus(`Language changed to ${languageName}`, 'default');
+            }
+
+            getLanguageName() {
+                const languageMap = {
+                    'en-US': 'English (US)',
+                    'hi-IN': 'हिंदी Hindi',
+                    'ta-IN': 'தமிழ் Tamil',
+                    'es-ES': 'Spanish',
+                    'fr-FR': 'French',
+                    'de-DE': 'German',
+                    'it-IT': 'Italian',
+                    'pt-BR': 'Portuguese',
+                    'ja-JP': 'Japanese',
+                    'ko-KR': 'Korean',
+                    'zh-CN': 'Chinese'
+                };
+                return languageMap[this.languageSelect.value] || 'Unknown';
+            }
+
+            showStatus(message, type = 'default') {
+                this.statusIndicator.textContent = message;
+                this.statusIndicator.className = 'status-indicator';
+                
+                if (type === 'recording') {
+                    this.statusIndicator.classList.add('recording');
+                }
+            }
+
+            async copyToClipboard() {
+                if (this.currentTranscription) {
+                    try {
+                        await navigator.clipboard.writeText(this.currentTranscription);
+                        this.showNotification('Text copied to clipboard!');
+                    } catch (error) {
+                        console.error('Error copying to clipboard:', error);
+                        this.showNotification('Error copying text', 'error');
+                    }
+                }
+            }
+
+            downloadTranscription() {
+                if (this.currentTranscription) {
+                    const language = this.getLanguageName();
+                    const blob = new Blob([this.currentTranscription], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `transcription_${language.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().slice(0, 19)}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    this.showNotification('Transcription downloaded!');
+                }
+            }
+
+            generateSummary() {
+                if (this.currentTranscription) {
+                    // Simulate SOAP note generation
+                    const soapNote = this.generateSOAPNote(this.currentTranscription);
+                    this.transcriptionArea.textContent = soapNote;
+                    this.transcriptionArea.classList.add('active');
+                    this.showNotification('SOAP summary generated!');
+                }
+            }
+
+            generateSOAPNote(transcription) {
+                const language = this.getLanguageName();
+                // Simple SOAP note template - in a real app, this would use AI
+                return `SOAP NOTE SUMMARY:
+
+SUBJECTIVE:
+${transcription.substring(0, 200)}...
+
+OBJECTIVE:
+[Physical examination findings would be documented here]
+
+ASSESSMENT:
+[Clinical assessment based on symptoms described]
+
+PLAN:
+[Treatment plan and follow-up recommendations]
+
+---
+Generated from voice transcription in ${language}
+Timestamp: ${new Date().toLocaleString()}`;
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: ${type === 'error' ? '#ef4444' : '#10b981'};
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                    z-index: 1000;
+                    font-weight: 500;
+                    max-width: 300px;
+                `;
+
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 3000);
+            }
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MedTranscribeApp();
+        });
+    </script>
+</body>
+</html>
